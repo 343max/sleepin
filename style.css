@@ -1,0 +1,28 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    font-family: -apple-system, "Helvertica Neue", "Helvetica", "Fira", "Ubunutu", "Arial";
+}
+
+webview.browser {
+    background-color: white;
+}
+
+video.screensaver {
+    width: 100%;
+    height: 100vh;
+}
+
+.screensaver_error {
+    color: #999;
+    font-size: 30px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+}

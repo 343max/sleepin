@@ -1,22 +1,25 @@
 {
-  "name": "electron-quick-start",
+  "name": "sleepin",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Messenger Video Conferencing system for TVs",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "Facebook",
+    "Messenger",
+    "VC",
+    "Video Conferencing"
   ],
-  "author": "GitHub",
+  "author": "Max von Webel",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "~1.6.2"
+  },
+  "dependencies": {
+    "express": "^4.15.3",
+    "jquery": "^3.2.1"
   }
 }
