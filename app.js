@@ -3,7 +3,7 @@ const app = require('electron').remote.app
 const path = require('path')
 
 function log_it(event_name, e) {
-    console.log(event_name + ' ' + Date())
+    console.log(e.type)
     console.dir(e)
 }
 
@@ -43,22 +43,19 @@ function launch_server() {
     })
 }
 
-launch_server()
-
-function cleanup_stage() {
+function present(o) {
     $('#stage>*').detach()
+    $('#stage').append(o)
 }
 
 function start_screensaver() {
-    cleanup_stage()
-
     const screensaver_path = path.join(app.getPath('userData'), 'Screensaver')
     const fs = require('fs')
     fs.readdir(screensaver_path, (err, items) => {
       if (err) {
-          $('#stage').append($('<div>').addClass('screensaver_error').text('couldn\'t load screensavers: ' + err.message))
+          present($('<div>').addClass('screensaver_error').text('couldn\'t load screensavers: ' + err.message))
       } else if(items.length == 0) {
-          $('#stage').append($('<div>').addClass('screensaver_error').text('couldn\'t load screensavers: no videos in ' + screensaver_path))
+          present($('<div>').addClass('screensaver_error').text('couldn\'t load screensavers: no videos in ' + screensaver_path))
       } else {
           const video_name = items[Math.floor(Math.random() * items.length)]
           const $video = $('<video>').attr('src', path.join(screensaver_path, video_name)).addClass('screensaver')
@@ -69,28 +66,49 @@ function start_screensaver() {
               video.currentTime = Math.random() * video.duration
               video.play()
           });
-          $('#stage').append($video)
+          present($video)
       }
     })
 }
 
 var browser
-function start_call(peer_id) {
-    
-}
+function start_browser(url) {
+    const $browser = $('<webview>')
+                        .attr('autoresize', 'yes')
+                        .attr('src', url)
+                        .attr('preload', path.join(__dirname, 'inject.js'))
+                        .addClass('browser')
+    present($browser)
+    browser = $browser[0]
+    do_layout()
 
-onload = function () {
-    start_screensaver()
-    // browser = document.querySelector('#browser');
-    // doLayout();
-    // window.onresize = doLayout;
-    // browser.addEventListener('console-message', (e) => {
-    //     console.log('Guest page logged a message:', e.message)
-    // })
+    const ipcHandlers = {
+        'setState': (args) => {
+            const newState = args[0]
 
-    // browser.addEventListener('dom-ready', () => {
-    //     browser.openDevTools()
-    // })
+            if (newState == 'call_finished') {
+                start_screensaver()
+            }
+        }
+    }
+
+    browser.addEventListener('console-message', (e) => {
+        console.log('webview:', e.message)
+        console.dir(e)
+    })
+
+    browser.addEventListener('ipc-message', (e) => {
+        const func = ipcHandlers[e.channel]
+        if (func == null) {
+            console.warn('no IPC handler for ' + e.channel + ' ' + json.stringify(e.args))
+        } else {
+            func(e.args)
+        }
+    })
+
+    browser.addEventListener('dom-ready', () => {
+        browser.openDevTools()
+    })
 
     // browser.addEventListener('load-commit', (e) => { log_it('load-commit', e) })
     // browser.addEventListener('did-finish-load', (e) => { log_it('did-finish-load', e) })
@@ -119,13 +137,28 @@ onload = function () {
     // browser.addEventListener('media-started-playing', (e) => { log_it('media-started-playing', e) })
     // browser.addEventListener('media-paused', (e) => { log_it('media-paused', e) })
     // browser.addEventListener('did-change-theme-color', (e) => { log_it('did-change-theme-color', e) })
-    // browser.addEventListener('update-target-url', (e) => { log_it('update-target-url', e) })
+    browser.addEventListener('did-navigate', (e) => { log_it('did-navigate', e) })
+    browser.addEventListener('did-navigate-in-page', (e) => { log_it('did-navigate-in-page', e) })
     // browser.addEventListener('devtools-opened', (e) => { log_it('devtools-opened', e) })
     // browser.addEventListener('devtools-closed', (e) => { log_it('devtools-closed', e) })
     // browser.addEventListener('devtools-focused', (e) => { log_it('devtools-focused', e) })
 }
 
-function doLayout() {
+function start_call(peer_id) {
+    start_browser('https://www.messenger.com/videocall/incall/?peer_id=' + peer_id)
+}
+
+onload = function () {
+    launch_server()
+    start_screensaver()
+    setTimeout(() => {
+        start_call('100001827298722')
+    }, 500)
+
+    window.onresize = do_layout;
+}
+
+function do_layout() {
     if (browser) {
         browser.style.width = document.documentElement.clientWidth + 'px';
         browser.style.height = document.documentElement.clientHeight + 'px';
