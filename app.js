@@ -1,11 +1,34 @@
 const $ = require('jquery')
 const app = require('electron').remote.app
 const path = require('path')
+const fs = require('fs')
 
 function log_it(event_name, e) {
     console.log(e.type)
     console.dir(e)
 }
+
+const peers = (() => {
+    const peers_path = path.join(app.getPath('userData'), 'peers.json')
+    if (!fs.existsSync(peers_path)) {
+        alert('Address book ' + peers_path + ' doesn\'t exist. Please copy the sample address book peers.sample.json and customize it.');
+        app.quit()
+        return []
+    }
+
+    var data
+    try {
+        data = JSON.parse(fs.readFileSync(peers_path))
+    }
+    catch(e) {
+        console.dir(e)
+        alert('Couldn\'t read address book ' + peers_path + ' . Please make sure it contains an array of perrs {id, name, image_src}\n\n' + e)
+        app.quit()
+        return []
+    }
+
+    return data
+})()
 
 function launch_server() {
     const express = require('express')
@@ -24,14 +47,7 @@ function launch_server() {
     })
 
     app.get('/peers.json', (req, res) => {
-        res.json(
-            [
-                {
-                    name: 'Alice',
-                    id: '12345'
-                }
-            ]
-        )
+        res.json(peers)
     })
 
     app.listen(port, (err) => {
@@ -50,7 +66,6 @@ function present(o) {
 
 function start_screensaver() {
     const screensaver_path = path.join(app.getPath('userData'), 'Screensaver')
-    const fs = require('fs')
     fs.readdir(screensaver_path, (err, items) => {
       if (err) {
           present($('<div>').addClass('screensaver_error').text('couldn\'t load screensavers: ' + err.message))
@@ -109,39 +124,6 @@ function start_browser(url) {
     browser.addEventListener('dom-ready', () => {
         browser.openDevTools()
     })
-
-    // browser.addEventListener('load-commit', (e) => { log_it('load-commit', e) })
-    // browser.addEventListener('did-finish-load', (e) => { log_it('did-finish-load', e) })
-    // browser.addEventListener('did-fail-load', (e) => { log_it('did-fail-load', e) })
-    // browser.addEventListener('did-frame-finish-load', (e) => { log_it('did-frame-finish-load', e) })
-    // browser.addEventListener('did-start-loading', (e) => { log_it('did-start-loading', e) })
-    // browser.addEventListener('did-stop-loading', (e) => { log_it('did-stop-loading', e) })
-    // browser.addEventListener('did-get-response-details', (e) => { log_it('did-get-response-details', e) })
-    // browser.addEventListener('did-get-redirect-request', (e) => { log_it('did-get-redirect-request', e) })
-    // browser.addEventListener('dom-ready', (e) => { log_it('dom-ready', e) })
-    // browser.addEventListener('page-title-updated', (e) => { log_it('page-title-updated', e) })
-    // browser.addEventListener('page-favicon-updated', (e) => { log_it('page-favicon-updated', e) })
-    // browser.addEventListener('enter-html-full-screen', (e) => { log_it('enter-html-full-screen', e) })
-    // browser.addEventListener('leave-html-full-screen', (e) => { log_it('leave-html-full-screen', e) })
-    // browser.addEventListener('found-in-page', (e) => { log_it('found-in-page', e) })
-    // browser.addEventListener('new-window', (e) => { log_it('new-window', e) })
-    // browser.addEventListener('will-navigate', (e) => { log_it('will-navigate', e) })
-    // browser.addEventListener('did-navigate', (e) => { log_it('did-navigate', e) })
-    // browser.addEventListener('did-navigate-in-page', (e) => { log_it('did-navigate-in-page', e) })
-    // browser.addEventListener('close', (e) => { log_it('close', e) })
-    // browser.addEventListener('ipc-message', (e) => { log_it('ipc-message', e) })
-    // browser.addEventListener('crashed', (e) => { log_it('crashed', e) })
-    // browser.addEventListener('gpu-crashed', (e) => { log_it('gpu-crashed', e) })
-    // browser.addEventListener('plugin-crashed', (e) => { log_it('plugin-crashed', e) })
-    // browser.addEventListener('destroyed', (e) => { log_it('destroyed', e) })
-    // browser.addEventListener('media-started-playing', (e) => { log_it('media-started-playing', e) })
-    // browser.addEventListener('media-paused', (e) => { log_it('media-paused', e) })
-    // browser.addEventListener('did-change-theme-color', (e) => { log_it('did-change-theme-color', e) })
-    browser.addEventListener('did-navigate', (e) => { log_it('did-navigate', e) })
-    browser.addEventListener('did-navigate-in-page', (e) => { log_it('did-navigate-in-page', e) })
-    // browser.addEventListener('devtools-opened', (e) => { log_it('devtools-opened', e) })
-    // browser.addEventListener('devtools-closed', (e) => { log_it('devtools-closed', e) })
-    // browser.addEventListener('devtools-focused', (e) => { log_it('devtools-focused', e) })
 }
 
 function start_call(peer_id) {
@@ -152,7 +134,7 @@ onload = function () {
     launch_server()
     start_screensaver()
     setTimeout(() => {
-        start_call('100001827298722')
+        start_call(peers[0].id)
     }, 500)
 
     window.onresize = do_layout;
