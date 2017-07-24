@@ -5,6 +5,8 @@ html, body {
     padding: 0;
     background-color: black;
     font-family: -apple-system, "Helvertica Neue", "Helvetica", "Fira", "Ubunutu", "Arial";
+    overflow: hidden;
+    cursor: none;
 }
 
 webview.browser {

@@ -1,4 +1,8 @@
 (() => {
+    if (!document.location.href.match('^https://www.messenger.com/videocall/incall')) {
+        return;
+    }
+    
     const { ipcRenderer } = require('electron')
     const states = {
         prepare_call: 'prepare_call',

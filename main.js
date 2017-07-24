@@ -15,9 +15,11 @@ let mainWindow
 
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 1200, height: 900, fullscreen: !DEBUG, webPreferences: { devTools: true } })
+  mainWindow = new BrowserWindow({ width: 1200, height: 900, fullscreen: !DEBUG, kiosk: !DEBUG, webPreferences: { devTools: true } })
 
   mainWindow.webContents.DEBUG = DEBUG
+
+  mainWindow.setMenu(null)
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
