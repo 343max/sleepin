@@ -36,6 +36,30 @@ const peers = (() => {
     return data
 })()
 
+const states = require('./states.js')
+const stateHandlers = {
+    [states.call_finished]: () => {
+        start_screensaver()
+        setState(states.idle)
+    }
+}
+
+var state = states.idle
+function setState(newState) {
+    if (state == newState) {
+        return
+    }
+
+    const func = stateHandlers[newState]
+    if (!func) {
+        console.warn('no state handler for ' + newState)
+    } else {
+        func(state)
+    }
+
+    state = newState
+}
+
 function launch_server() {
     const express = require('express')
     const app = express()
@@ -47,13 +71,13 @@ function launch_server() {
         res.render('index.html')
     })
 
-    app.get('/call/:peer_id', (req, res) => {
-        console.dir(req.params)
-        res.end('done!')
-    })
-
     app.get('/peers.json', (req, res) => {
         res.json(peers)
+    })
+
+    app.post('/call/:peer_id', (req, res) => {
+        res.json(true)
+        start_call(req.params['peer_id'])
     })
 
     app.listen(port, (err) => {
@@ -106,10 +130,7 @@ function start_browser(url) {
     const ipcHandlers = {
         'setState': (args) => {
             const newState = args[0]
-
-            if (newState == 'call_finished') {
-                start_screensaver()
-            }
+            setState(newState)
         }
     }
 

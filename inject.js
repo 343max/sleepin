@@ -4,14 +4,10 @@
     }
     
     const { ipcRenderer } = require('electron')
-    const states = {
-        prepare_call: 'prepare_call',
-        in_call: 'in_call',
-        call_finished: 'call_finished'
-    }
+    const states = require('./states.js')
 
     const stateHandlers = {
-        'prepare_call': () => {
+        [states.prepare_call]: () => {
             var intervalHandler = window.setInterval(() => {
                 // find button in the center of the screen
                 const pageCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 }
@@ -42,14 +38,13 @@
         }
     }
 
-    var state = ''
+    var state = states.idle
     function setState(newState) {
         if (state == newState) {
             return
         }
 
         state = newState
-        console.log('new state: ' + state)
         ipcRenderer.sendToHost('setState', state)
 
         const func = stateHandlers[state]

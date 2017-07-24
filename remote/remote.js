@@ -2,11 +2,18 @@ $.when(
     $.getJSON('/peers.json'),
     $.ready
 ).then((data) => {
-    console.log('hello!')
-    console.dir(data[0])
+    const $addressBook = $('#address_book').empty()
 
     for (i in data[0]) {
-        peer = data[0][i]
-        console.dir(peer)
+        const peer = data[0][i]
+
+        const $div = $('<div>').addClass('peer')
+        $div.append($('<label>').text(peer.name))
+
+        $div.click(() => {
+            $.post('/call/' + peer.id)
+        })
+
+        $addressBook.append($div)
     }
 })
