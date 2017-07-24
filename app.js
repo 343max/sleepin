@@ -2,6 +2,12 @@ const $ = require('jquery')
 const app = require('electron').remote.app
 const path = require('path')
 const fs = require('fs')
+const ipcRenderer = require('electron').ipcRenderer
+
+var DEBUG = false
+ipcRenderer.on('DEBUG', (event, debug) => {
+    DEBUG = debug
+})
 
 function log_it(event_name, e) {
     console.log(e.type)
@@ -121,9 +127,11 @@ function start_browser(url) {
         }
     })
 
-    browser.addEventListener('dom-ready', () => {
-        browser.openDevTools()
-    })
+    if (DEBUG) {
+        browser.addEventListener('dom-ready', () => {
+            browser.openDevTools()
+        })
+    }
 }
 
 function start_call(peer_id) {
@@ -134,7 +142,7 @@ onload = function () {
     launch_server()
     start_screensaver()
     setTimeout(() => {
-        start_call(peers[0].id)
+        // start_call(peers[0].id)
     }, 500)
 
     window.onresize = do_layout;
