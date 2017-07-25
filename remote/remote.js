@@ -34,6 +34,10 @@ $.when(
                 if (state == 'in_call' || state == 'prepare_call') {
                     $('#incall').show()
                     $('#address_book').hide()
+                    $('.call_info>label').text('')
+                    $.get('/calling_party.json', (peer) => {
+                        $('.call_info>label').text(peer.name)  
+                    })
                 } else {
                     $('#incall').hide()
                     $('#address_book').show()

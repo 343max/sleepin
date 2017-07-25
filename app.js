@@ -79,6 +79,10 @@ function launch_server() {
         res.json(state)
     })
 
+    app.get('/calling_party.json', (req, res) => {
+        res.json(calling_party)
+    })
+
     app.post('/call/:peer_id', (req, res) => {
         res.json(true)
         start_call(req.params['peer_id'])
@@ -164,7 +168,15 @@ function start_browser(url) {
     }
 }
 
+var calling_party
 function start_call(peer_id) {
+    for(var i in peers) {
+        const peer = peers[i]
+        if (peer.id == peer_id) {
+            calling_party = peer
+            break
+        }
+    }
     start_browser('https://www.messenger.com/videocall/incall/?peer_id=' + peer_id)
 }
 

@@ -60,10 +60,8 @@ body {
     left: 50%;
     bottom: 0;
     position: absolute;
-    /* transform: rotate(110deg);  */
 }
 
 .hang_up:active {
     opacity: 0.6;
-    transform:  rotate(136deg);
 }
