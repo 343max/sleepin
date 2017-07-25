@@ -16,4 +16,30 @@ $.when(
 
         $addressBook.append($div)
     }
+
+    $('button.hang_up').click(() => {
+        $.post('/hang_up')
+    })
+
+    var state
+    const poll = () => {
+        setTimeout(() => {
+            $.get('/state.json', (newState) => {
+                poll()
+                if (newState == state) {
+                    return
+                }
+                state = newState
+
+                if (state == 'in_call' || state == 'prepare_call') {
+                    $('#incall').show()
+                    $('#address_book').hide()
+                } else {
+                    $('#incall').hide()
+                    $('#address_book').show()
+                }
+            })
+        }, 100)
+    }
+    poll()
 })

@@ -75,9 +75,18 @@ function launch_server() {
         res.json(peers)
     })
 
+    app.get('/state.json', (req, res) => {
+        res.json(state)
+    })
+
     app.post('/call/:peer_id', (req, res) => {
         res.json(true)
         start_call(req.params['peer_id'])
+    })
+
+    app.post('/hang_up', (req, res) => {
+        res.json(true)
+        browser.send('hang_up')
     })
 
     app.listen(port, (err) => {

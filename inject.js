@@ -6,6 +6,19 @@
     const { ipcRenderer } = require('electron')
     const states = require('./states.js')
 
+    ipcRenderer.on('hang_up', (event, data) => {
+        var button = document.querySelector('button.endCall')
+        if (!button) {
+            button = document.querySelector('button[data-testid="endCallButton"]')
+        }
+
+        if (!button) {
+            console.warn('couldn\'t find hang up button');
+        } else {
+            button.click()
+        }
+            })
+
     const stateHandlers = {
         [states.prepare_call]: () => {
             var intervalHandler = window.setInterval(() => {
