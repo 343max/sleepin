@@ -188,10 +188,6 @@ function start_call(peer_id) {
 onload = function () {
     launch_server()
     start_screensaver()
-    setTimeout(() => {
-        // start_call(peers[0].id)
-    }, 500)
-
     window.onresize = do_layout;
 }
 
