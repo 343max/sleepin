@@ -63,7 +63,7 @@ function setState(newState) {
 function launch_server() {
     const express = require('express')
     const app = express()
-    const port = 8080
+    const port = 8888
 
     app.use(express.static(path.join(__dirname, 'remote')))
 
