@@ -127,6 +127,11 @@ function start_screensaver() {
           present($video)
       }
     })
+
+    // kill the screensave video after 5 minutes because it takes up a lot of time
+    setTimeout(() => {
+        $('.screensaver').detach()
+    }, 1000 * 60 * 5)
 }
 
 var browser
