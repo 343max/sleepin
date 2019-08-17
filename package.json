@@ -16,10 +16,10 @@
   "author": "Max von Webel",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "~1.6.2"
+    "electron": "^6.0.2"
   },
   "dependencies": {
-    "express": "^4.15.3",
-    "jquery": "^3.2.1"
+    "express": "^4.17.1",
+    "jquery": "^3.4.1"
   }
 }
