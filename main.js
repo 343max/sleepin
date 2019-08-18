@@ -30,6 +30,7 @@ function createWindow() {
 
   if (DEBUG) {
     mainWindow.openDevTools()
+    require('devtron').install()
   }
 
   mainWindow.webContents.on('did-finish-load', () => {

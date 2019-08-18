@@ -16,6 +16,7 @@
   "author": "Max von Webel",
   "license": "CC0-1.0",
   "devDependencies": {
+    "devtron": "^1.4.0",
     "electron": "^6.0.2"
   },
   "dependencies": {
