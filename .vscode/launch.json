@@ -10,8 +10,27 @@
             "request": "launch",
             "cwd": "${workspaceRoot}",
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
-            "args" : [".", "--debug"],
+            "args" : [
+                ".",
+                "--enable-logging",
+                "--debug"
+            ],
+            "outputCapture": "std"
+        },
+        {
+            "name": "Debug BrowserWindow",
+            "type": "chrome",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "runtimeArgs" : [
+                ".",
+                "--enable-logging",
+                "--remote-debugging-port=9222",
+                "--debug"
+            ],
             "outputCapture": "std"
         }
+
     ]
 }
