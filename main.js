@@ -22,7 +22,8 @@ function createWindow() {
     kiosk: !DEBUG,
     webPreferences: { 
       devTools: true,
-      nodeIntegration: true
+      nodeIntegration: true,
+      webviewTag: true
     } 
   })
 
